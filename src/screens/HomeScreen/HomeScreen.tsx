@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {MainScreenNavigationProp} from '@navigation/types';
 
 const HomeScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<MainScreenNavigationProp>();
 
   return (
     <View style={styles.sectionContainer}>
