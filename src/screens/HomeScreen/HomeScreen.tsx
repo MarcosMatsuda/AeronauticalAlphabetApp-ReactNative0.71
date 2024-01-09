@@ -1,9 +1,11 @@
 import React from 'react';
-import {View, FlatList, StyleSheet} from 'react-native';
+import {View, FlatList, StyleSheet, Text} from 'react-native';
 import {Searchbar, List} from 'react-native-paper';
 
 import {useNavigation} from '@react-navigation/native';
 import {MainScreenNavigationProp} from '@navigation/types';
+
+import {useNetInfo} from '@react-native-community/netinfo';
 
 const data = [
   {id: '1', title: 'Item 1', description: 'Description for Item 1'},
@@ -38,11 +40,21 @@ const Item: React.FC<ItemProps> = ({title, description, renderLeft}) => (
 );
 
 const HomeScreen: React.FC = () => {
+  const {isConnected} = useNetInfo();
+
   const navigation = useNavigation<MainScreenNavigationProp>();
 
   const handleSearch = () => {
     navigation.navigate('DetailsScreen');
   };
+
+  if (!isConnected) {
+    return (
+      <View style={styles.container}>
+        <Text>No Connection!</Text>
+      </View>
+    );
+  }
 
   const renderLeft = (props: any) => <ListIcon {...props} icon="star" />;
 
