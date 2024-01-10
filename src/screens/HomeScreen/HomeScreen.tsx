@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, FlatList, StyleSheet, Text} from 'react-native';
 import {Searchbar, List} from 'react-native-paper';
-
 import {useNavigation} from '@react-navigation/native';
 import {MainScreenNavigationProp} from '@navigation/types';
 
