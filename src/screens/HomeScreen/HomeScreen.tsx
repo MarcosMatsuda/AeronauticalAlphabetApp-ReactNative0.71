@@ -47,7 +47,6 @@ const HomeScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleSearch = () => {
-    console.log('Performing search:', searchQuery);
     // navigation.navigate('DetailsScreen');
   };
 
@@ -81,10 +80,21 @@ const HomeScreen: React.FC = () => {
     <View style={styles.container}>
       <Searchbar
         placeholder="Search"
-        onChangeText={query => setSearchQuery(query)}
-        value={searchQuery}
+        onChangeText={handleSearch}
+        value={'Something'}
         style={styles.searchbar}
-        onIconPress={handleSearch}
+      />
+      <FlatList
+        data={data}
+        keyExtractor={item => String(item.id)}
+        renderItem={({item}) => (
+          <Item
+            title={item.title}
+            description={item.description}
+            renderLeft={renderLeft}
+          />
+        )}
+
       />
 
       {loading ? (
