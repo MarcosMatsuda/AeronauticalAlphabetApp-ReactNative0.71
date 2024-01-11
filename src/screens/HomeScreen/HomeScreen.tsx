@@ -1,16 +1,12 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, FlatList, StyleSheet, Text} from 'react-native';
 import {Searchbar, List} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
-import {MainScreenNavigationProp} from '@navigation/types';
+// import {useNavigation} from '@react-navigation/native';
+// import {MainScreenNavigationProp} from '@navigation/types';
 
 import {useNetInfo} from '@react-native-community/netinfo';
 
-const data = [
-  {id: '1', title: 'Item 1', description: 'Description for Item 1'},
-  {id: '2', title: 'Item 2', description: 'Description for Item 2'},
-  {id: '3', title: 'Item 3', description: 'Description for Item 3'},
-];
+// import mockedData from './../../mocks/mockData';
 
 const Colors = {
   primary: '#3498db',
@@ -30,22 +26,46 @@ const ListIcon: React.FC<ListIconProps> = ({icon}) => (
 
 interface ItemProps {
   title: string;
-  description: string;
   renderLeft: (props: any) => React.ReactNode;
 }
 
-const Item: React.FC<ItemProps> = ({title, description, renderLeft}) => (
-  <List.Item title={title} description={description} left={renderLeft} />
+const Item: React.FC<ItemProps> = ({title, renderLeft}) => (
+  <List.Item title={title} left={renderLeft} />
 );
+
+interface DataItem {
+  [key: string]: string;
+}
 
 const HomeScreen: React.FC = () => {
   const {isConnected} = useNetInfo();
 
-  const navigation = useNavigation<MainScreenNavigationProp>();
+  // const navigation = useNavigation<MainScreenNavigationProp>();
+
+  const [data, setData] = useState<DataItem[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleSearch = () => {
-    navigation.navigate('DetailsScreen');
+    console.log('Performing search:', searchQuery);
+    // navigation.navigate('DetailsScreen');
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // setData(mockedData);
+      } catch (e) {
+        throw e;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   if (!isConnected) {
     return (
@@ -61,21 +81,23 @@ const HomeScreen: React.FC = () => {
     <View style={styles.container}>
       <Searchbar
         placeholder="Search"
-        onChangeText={handleSearch}
-        value={'Something'}
+        onChangeText={query => setSearchQuery(query)}
+        value={searchQuery}
         style={styles.searchbar}
+        onIconPress={handleSearch}
       />
-      <FlatList
-        data={data}
-        keyExtractor={item => String(item.id)}
-        renderItem={({item}) => (
-          <Item
-            title={item.title}
-            description={item.description}
-            renderLeft={renderLeft}
-          />
-        )}
-      />
+
+      {loading ? (
+        <Text>Carregando...</Text>
+      ) : (
+        <FlatList
+          data={data}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <Item title={item.name} renderLeft={renderLeft} />
+          )}
+        />
+      )}
     </View>
   );
 };
