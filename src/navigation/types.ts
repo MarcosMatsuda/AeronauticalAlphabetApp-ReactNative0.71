@@ -5,5 +5,10 @@ export type StackNavigatorParamList = {
   DetailsScreen: undefined;
 };
 
+export type BottomTabParamList = {
+  Home: undefined;
+  DictionaryScreen: undefined;
+};
+
 export type MainScreenNavigationProp =
   NativeStackNavigationProp<StackNavigatorParamList>;
