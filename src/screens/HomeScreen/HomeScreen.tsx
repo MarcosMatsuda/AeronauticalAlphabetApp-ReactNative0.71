@@ -13,7 +13,7 @@ import mockedData from './../../mocks/mockData';
 const HomeScreen: React.FC = () => {
   const {isConnected} = useNetInfo();
 
-  const [searchVal, setSearchVal] = useState<string>('');
+  const [searchVal, setSearchVal] = useState<string>('PR-GUM');
   const [data, setData] = useState<any[] | null>(null);
   const [visible, setVisible] = React.useState(false);
 
@@ -27,7 +27,7 @@ const HomeScreen: React.FC = () => {
     }
 
     const filteredResults = data.filter(item =>
-      item.name.toLowerCase().includes(searchVal.toLowerCase()),
+      item.name.toLowerCase().includes(searchVal.toUpperCase()),
     );
 
     return filteredResults;
@@ -36,7 +36,8 @@ const HomeScreen: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 0));
+
         setData(mockedData);
       } catch (e) {
         throw e;
@@ -47,6 +48,19 @@ const HomeScreen: React.FC = () => {
 
     fetchData();
   }, []);
+
+  const searchNames = (data: any[], word: string) => {
+    const firstLetter = word.charAt(0).toUpperCase();
+    const nomesFiltrados = data.filter(obj => obj.name.startsWith(firstLetter));
+
+    return nomesFiltrados;
+  };
+
+  const searchData = (item: string) => {
+    const result = searchNames(mockedData, item);
+
+    showModal();
+  };
 
   if (!isConnected) {
     return (
@@ -60,11 +74,13 @@ const HomeScreen: React.FC = () => {
     <View style={styles.container}>
       <PaperProvider>
         <Searchbar
-          placeholder="Search"
           onChangeText={setSearchVal}
-          value={'Something'}
+          value={searchVal}
           style={styles.searchbar}
         />
+        <Button mode="contained" onPress={() => searchData(searchVal)}>
+          Search
+        </Button>
         <Portal>
           <Modal
             visible={visible}
@@ -78,9 +94,6 @@ const HomeScreen: React.FC = () => {
             </View>
           </Modal>
         </Portal>
-        <Button style={{marginTop: 30}} onPress={showModal}>
-          Show
-        </Button>
       </PaperProvider>
     </View>
   );
