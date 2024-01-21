@@ -10,12 +10,15 @@ import {
 import {useNetInfo} from '@react-native-community/netinfo';
 import mockedData from './../../mocks/mockData';
 
+type Dictionary = {id: number; name: string}[];
+
 const HomeScreen: React.FC = () => {
   const {isConnected} = useNetInfo();
 
-  const [searchVal, setSearchVal] = useState<string>('PR-GUM');
-  const [data, setData] = useState<any[] | null>(null);
-  const [visible, setVisible] = React.useState(false);
+  const [searchVal, setSearchVal] = useState<string>('');
+  const [data, setData] = useState<Dictionary>([]);
+  const [visible, setVisible] = useState(false);
+  const [modalResult, setModalResult] = useState<any>(null);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -31,6 +34,29 @@ const HomeScreen: React.FC = () => {
     );
 
     return filteredResults;
+  };
+
+  const searchNames = (data: any[], word: string) => {
+    const filteredNames=[];
+    for (let i = 0; i < word.length; i++) {
+      const letter = word[i];
+
+      const target = data.filter(obj =>
+        obj.name.startsWith(letter.toUpperCase()),
+      );
+
+      filteredNames.push(target);
+    }
+
+    return filteredNames;
+  };
+
+  const searchData = (arrayData: any, item: string) => {
+    const result = searchNames(arrayData, item);
+
+    console.log(result);
+    showModal();
+    setModalResult(result);
   };
 
   useEffect(() => {
@@ -49,19 +75,6 @@ const HomeScreen: React.FC = () => {
     fetchData();
   }, []);
 
-  const searchNames = (data: any[], word: string) => {
-    const firstLetter = word.charAt(0).toUpperCase();
-    const nomesFiltrados = data.filter(obj => obj.name.startsWith(firstLetter));
-
-    return nomesFiltrados;
-  };
-
-  const searchData = (item: string) => {
-    const result = searchNames(mockedData, item);
-
-    showModal();
-  };
-
   if (!isConnected) {
     return (
       <View style={styles.container}>
@@ -78,7 +91,7 @@ const HomeScreen: React.FC = () => {
           value={searchVal}
           style={styles.searchbar}
         />
-        <Button mode="contained" onPress={() => searchData(searchVal)}>
+        <Button mode="contained" onPress={() => searchData(data, searchVal)}>
           Search
         </Button>
         <Portal>
@@ -86,9 +99,9 @@ const HomeScreen: React.FC = () => {
             visible={visible}
             onDismiss={hideModal}
             contentContainerStyle={containerStyle}>
-            <Text>Will show result.</Text>
+            <Text>Results founded:</Text>
             <View>
-              {dataResults().map((item: any, index: number) => (
+              {modalResult?.map((item: any, index: number) => (
                 <Text key={index}>{item.name}</Text>
               ))}
             </View>
