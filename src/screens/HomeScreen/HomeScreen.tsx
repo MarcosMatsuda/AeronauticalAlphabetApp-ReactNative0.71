@@ -1,13 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {
   Modal,
   Portal,
   Button,
   PaperProvider,
   Searchbar,
+  Text,
+  IconButton,
 } from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
+import {MainScreenNavigationProp} from '@navigation/types';
 import {useNetInfo} from '@react-native-community/netinfo';
+
+import {Dictionary} from './../../services/types';
+import {searchNames} from './../../services/utils/filtersUtils';
+
 import mockedData from './../../mocks/mockData';
 
 type Dictionary = {id: number; name: string}[];
@@ -15,25 +23,27 @@ type Dictionary = {id: number; name: string}[];
 const HomeScreen: React.FC = () => {
   const {isConnected} = useNetInfo();
 
-  const [searchVal, setSearchVal] = useState<string>('');
   const [data, setData] = useState<Dictionary>([]);
-  const [visible, setVisible] = useState(false);
+  const [searchVal, setSearchVal] = useState<string>('');
   const [modalResult, setModalResult] = useState<any>(null);
+  const [visible, setVisible] = useState(false);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const navigation = useNavigation<MainScreenNavigationProp>();
+
   const containerStyle = {backgroundColor: 'white', padding: 20};
 
-  const dataResults = () => {
-    if (!data) {
-      return [];
-    }
+  const showModal = () => setVisible(true);
 
-    const filteredResults = data.filter(item =>
-      item.name.toLowerCase().includes(searchVal.toUpperCase()),
-    );
+  const hideModal = () => {
+    setSearchVal('');
+    setVisible(false);
+  };
 
-    return filteredResults;
+  const searchData = (arrayData: any, item: string) => {
+    const result = searchNames(arrayData, item);
+    console.log(result.length);
+    setModalResult(result);
+    showModal();
   };
 
   const searchNames = (data: any[], word: string) => {
@@ -67,8 +77,6 @@ const HomeScreen: React.FC = () => {
         setData(mockedData);
       } catch (e) {
         throw e;
-      } finally {
-        // setLoading(false);
       }
     };
 
@@ -86,11 +94,21 @@ const HomeScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <PaperProvider>
-        <Searchbar
-          onChangeText={setSearchVal}
-          value={searchVal}
-          style={styles.searchbar}
-        />
+        <View style={styles.containerTitle}>
+          <View style={styles.titleContainer}>
+            <Text variant="titleLarge" style={styles.title}>
+              Do your research!
+            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Details')}>
+              <IconButton icon="information" size={24} />
+            </TouchableOpacity>
+          </View>
+          <Searchbar
+            onChangeText={setSearchVal}
+            value={searchVal}
+            style={styles.searchbar}
+          />
+        </View>
         <Button mode="contained" onPress={() => searchData(data, searchVal)}>
           Search
         </Button>
@@ -99,10 +117,16 @@ const HomeScreen: React.FC = () => {
             visible={visible}
             onDismiss={hideModal}
             contentContainerStyle={containerStyle}>
-            <Text>Results founded:</Text>
+            <View>
+              <Text variant="titleMedium">
+                Results founded: {`${modalResult?.length}`}
+              </Text>
+            </View>
             <View>
               {modalResult?.map((item: any, index: number) => (
-                <Text key={index}>{item.name}</Text>
+                <Text variant="titleSmall" key={index}>
+                  {item?.name}
+                </Text>
               ))}
             </View>
           </Modal>
@@ -119,6 +143,18 @@ const styles = StyleSheet.create({
   },
   searchbar: {
     marginBottom: 16,
+  },
+  containerTitle: {
+    flexDirection: 'column',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    marginBottom: 16,
+    marginVertical: 16,
   },
 });
 

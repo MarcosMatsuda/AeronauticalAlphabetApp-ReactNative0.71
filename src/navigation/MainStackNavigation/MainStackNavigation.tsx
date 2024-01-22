@@ -1,28 +1,40 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 import * as React from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {StackNavigatorParamList, BottomTabParamList} from '@navigation/types';
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import HomeScreen from '@screens/HomeScreen/HomeScreen';
 import DetailsScreen from '@screens/DetailsScreen/DetailsScreen';
 import DictionaryScreen from '@screens/DictionaryScreen/DictionaryScreen';
-
-import {StackNavigatorParamList, BottomTabParamList} from '@navigation/types';
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Stack = createNativeStackNavigator<StackNavigatorParamList>();
 function HomeStackNavigation() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="HomeScreen"
+        name="Home"
         component={HomeScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
+      <Stack.Screen
+        name="Details"
+        component={DetailsScreen}
+        options={{
+          headerTitle: 'Details',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function DictionaryStackNavigation() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Dictionary" component={DictionaryScreen} />
     </Stack.Navigator>
   );
 }
@@ -46,8 +58,8 @@ function MainStackNavigation() {
           }}
         />
         <Tab.Screen
-          name="DictionaryScreen"
-          component={DictionaryScreen}
+          name="Dictionary"
+          component={DictionaryStackNavigation}
           options={{
             tabBarLabel: 'Dictionary',
             tabBarIcon: ({color}) => (
