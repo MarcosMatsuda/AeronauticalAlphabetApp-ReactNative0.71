@@ -18,6 +18,8 @@ import {searchNames} from './../../services/utils/filtersUtils';
 
 import mockedData from './../../mocks/mockData';
 
+type Dictionary = {id: number; name: string}[];
+
 const HomeScreen: React.FC = () => {
   const {isConnected} = useNetInfo();
 
@@ -42,6 +44,29 @@ const HomeScreen: React.FC = () => {
     setModalResult(result);
 
     showModal();
+  };
+
+  const searchNames = (data: any[], word: string) => {
+    const filteredNames=[];
+    for (let i = 0; i < word.length; i++) {
+      const letter = word[i];
+
+      const target = data.filter(obj =>
+        obj.name.startsWith(letter.toUpperCase()),
+      );
+
+      filteredNames.push(target);
+    }
+
+    return filteredNames;
+  };
+
+  const searchData = (arrayData: any, item: string) => {
+    const result = searchNames(arrayData, item);
+
+    console.log(result);
+    showModal();
+    setModalResult(result);
   };
 
   useEffect(() => {
