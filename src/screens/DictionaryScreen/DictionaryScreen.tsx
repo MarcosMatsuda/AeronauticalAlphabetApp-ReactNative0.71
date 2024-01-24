@@ -1,42 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {View, FlatList, StyleSheet, Text} from 'react-native';
-import {Searchbar, List} from 'react-native-paper';
-// import {useNavigation} from '@react-navigation/native';
-// import {MainScreenNavigationProp} from '@navigation/types';
+import {View, FlatList} from 'react-native';
+import {List} from 'react-native-paper';
 
-import {useNetInfo} from '@react-native-community/netinfo';
+import {ListIconProps, ItemProps, DataItem} from './../../@types';
+import {Colors} from './../../constants';
+import styles from './styles';
 
 import mockedData from './../../mocks/mockData';
-
-const Colors = {
-  primary: '#3498db',
-  secondary: '#2ecc71',
-  accent: '#e74c3c',
-  background: '#ecf0f1',
-  text: '#2c3e50',
-};
-
-interface ListIconProps {
-  icon: string;
-}
 
 const ListIcon: React.FC<ListIconProps> = ({icon}) => (
   <List.Icon color={Colors.primary} icon={icon} />
 );
 
-interface ItemProps {
-  title: string;
-  renderLeft: (props: any) => React.ReactNode;
-}
-
 const Item: React.FC<ItemProps> = ({title, renderLeft}) => (
   <List.Item title={title} left={renderLeft} />
 );
-
-type DataItem = {
-  id: number;
-  name: string;
-};
 
 const DictionaryScreen: React.FC = () => {
   const [data, setData] = useState<DataItem[] | null>(null);
@@ -73,15 +51,5 @@ const DictionaryScreen: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  searchbar: {
-    marginBottom: 16,
-  },
-});
 
 export default DictionaryScreen;

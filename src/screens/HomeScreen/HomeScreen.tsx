@@ -39,8 +39,8 @@ const HomeScreen: React.FC = () => {
 
   const searchData = (arrayData: any, item: string) => {
     const result = searchNames(arrayData, item);
-    console.log(result.length);
     setModalResult(result);
+
     showModal();
   };
 
